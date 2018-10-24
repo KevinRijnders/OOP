@@ -4,7 +4,7 @@
  </head>
  <body>
  <?php 
-   require_once "connection.php";
+   require_once "connect.php";
    $stmt = $connect->query("SELECT * FROM users");
    echo '<table border="1">';
    while ( $row = $stmt->fetch(PDO::FETCH_ASSOC)) {
