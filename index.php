@@ -4,10 +4,8 @@
  </head>
  <body>
  <?php 
-    echo '<p>Hello World! 1</p>'; 
-    
- TESTING COMMIT
- 
+    echo '<p>Hello World!</p>'; 
+
  ?> 
  </body>
 </html>
