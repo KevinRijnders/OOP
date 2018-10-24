@@ -17,6 +17,13 @@
        echo('</td></tr>');
    }
    echo('</table>');
+
+   
  ?> 
+ 
+ 
+ 
+ <a href="adduser.php">Add user</a><br>
+ <a href="deleteuser.php">Delete user</a>
  </body>
 </html>
