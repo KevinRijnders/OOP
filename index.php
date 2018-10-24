@@ -4,8 +4,8 @@
  </head>
  <body>
  <?php 
-   $pdo = new PDO('mysql:host=localhost;port=3306;dbname=test', 'root', 'root');
-   $stmt = $pdo->query("SELECT * FROM users");
+   require_once "connection.php";
+   $stmt = $connect->query("SELECT * FROM users");
    echo '<table border="1">';
    while ( $row = $stmt->fetch(PDO::FETCH_ASSOC)) {
        echo '<tr><td>';
