@@ -1,55 +1,85 @@
-autos<?php
+<?php
 require_once "connect.php";
+if ( isset($_POST['logout'] ) ) {
+    header("Location: login.php");
+    return;
+};
+if ( !isset($_GET['name'] ) ) {
+    die("Name parameter missing!");
+    return;
+};
 
-if ( isset($_POST['name']) && isset($_POST['email']) 
-     && isset($_POST['password'])) {
-    $sql = "INSERT INTO users (name, email, password) 
-              VALUES (:name, :email, :password)";
-    echo("<pre>\n".$sql."\n</pre>\n");
-    $stmt = $connect->prepare($sql);
-    $stmt->execute(array(
-        ':name' => $_POST['name'],
-        ':email' => $_POST['email'],
-        ':password' => $_POST['password']));
+$failmsg = false;
+$succmsg = false;
+
+if (isset($_POST['make']) && isset($_POST['year']) && isset($_POST['mileage'])) {
+	$make = htmlentities($_POST['make']);
+	$year = htmlentities($_POST['year']);
+	$mileage = htmlentities($_POST['mileage']);
+	if (strlen($make) < 1 ) {
+		$failmsg = "Make is required";
+	}
+	elseif (! is_numeric($year) || (! is_numeric($mileage)) || strlen($year) < 1 || strlen($mileage) < 1) {
+		$failmsg = "Mileage and year must be numeric";
+	}
+	else {
+		$stmt = $connect->prepare('INSERT INTO autos
+        (make, year, mileage) VALUES ( :mk, :yr, :mi)');
+    	$stmt->execute(array(
+        ':mk' => $make,
+        ':yr' => $year,
+        ':mi' => $mileage)
+    );
+    	$success = "Record inserted";
+	}
 }
 
-if ( isset($_POST['delete']) && isset($_POST['user_id']) ) {
-    $sql = "DELETE FROM users WHERE user_id = :zip";
-    echo "<pre>\n$sql\n</pre>\n";
-    $stmt = $connect->prepare($sql);
-    $stmt->execute(array(':zip' => $_POST['user_id']));
-}
-
-$stmt = $connect->query("SELECT name, email, password, user_id FROM users");
+$stmt = $connect->query("SELECT make, year, mileage FROM autos ORDER BY mileage");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 ?>
 <html>
-<head></head><body><table border="1">
+<head>
+</head>
+
+<body>
+<h1> Vehicle database.</h1>
+
 <?php
-foreach ( $rows as $row ) {
-    echo "<tr><td>";
-    echo($row['name']);
-    echo("</td><td>");
-    echo($row['email']);
-    echo("</td><td>");
-    echo($row['password']);
-    echo("</td><td>");
-    echo('<form method="post"><input type="hidden" ');
-    echo('name="user_id" value="'.$row['user_id'].'">'."\n");
-    echo('<input type="submit" value="Del" name="delete">');
-    echo("\n</form>\n");
-    echo("</td></tr>\n");
+if ( $failmsg !== false ) {
+    print '<p style="color:red">';
+    print htmlentities($failmsg);
+    print "</p>\n";
+}
+else {
+	print '<p style="color:green">';
+	print htmlentities($succmsg);
+	print "</p>\n";
 }
 ?>
+<table border="1">
+    <?php
+    foreach ( $rows as $row ) {
+        echo "<tr><td>";
+        echo($row['make']);
+        echo("</td><td>");
+        echo($row['year']);
+        echo("</td><td>");
+        echo($row['mileage']);
+        echo("</td></tr>\n");
+    }
+    ?>
 </table>
-<p>Add A New User</p>
+<p>Add a new vehicle</p>
 <form method="post">
-<p>Name:
-<input type="text" name="name" size="40"></p>
-<p>Email:
-<input type="text" name="email"></p>
-<p>Password:
-<input type="password" name="password"></p>
+<p>Make:
+<input type="text" name="make" size="20"></p>
+<p>Mileage:
+<input type="text" name="year"  size="20"></p>
+<p>Year:
+<input type="text" name="mileage"  size="20"></p>
 <p><input type="submit" value="Add New"/></p>
+<input type="submit" name="logout" value="Log out">
 </form>
 </body>
