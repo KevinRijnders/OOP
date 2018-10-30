@@ -1,4 +1,5 @@
 <?php
+require_once "connect.php";
 if ( isset($_POST['refresh'] ) ) {
     header("Location: login.php");
     return;
